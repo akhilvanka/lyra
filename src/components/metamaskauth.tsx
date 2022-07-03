@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { button, address, divStyle } from "../styles/metamaskauth.css";
 
-const;
-
 function isMobileDevice() {
   return "ontouchstart" in window || "onmsgesturechange" in window;
 }
