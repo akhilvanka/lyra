@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { button, address, divStyle } from "../styles/metamaskauth.css";
 
 function isMobileDevice() {
-  return "ontouchstart" in window || "onmsgesturechange" in window;
+  if (typeof window !== "undefined") {
+    return "ontouchstart" in window || "onmsgesturechange" in window;
+  }
 }
 
 async function connect(onConnected) {
@@ -15,8 +17,8 @@ async function connect(onConnected) {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
+    onConnected(accounts[0]);
   }
-  onConnected(accounts[0]);
 }
 
 async function checjIfWalletIsConnected(onConnected) {
@@ -56,21 +58,23 @@ export default function MetaMaskAuth({ onAddressChanged }) {
 }
 
 function Connect({ setUserAddress }) {
-  if (isMobileDevice()) {
-    const dappUrl = "metamask-auth.com";
-    const metamaskAppDeepLink = "https://test.com";
+  if (typeof window !== "undefined") {
+    if (isMobileDevice()) {
+      const dappUrl = "metamask-auth.com";
+      const metamaskAppDeepLink = "https://test.com";
+      return (
+        <a href={metamaskAppDeepLink}>
+          <button className={button}>Connect to MetaMask</button>
+        </a>
+      );
+    }
+
     return (
-      <a href={metamaskAppDeepLink}>
-        <button className={button}>Connect to MetaMask</button>
-      </a>
+      <button className={button} onClick={() => connect(setUserAddress)}>
+        Connect to MetaMask
+      </button>
     );
   }
-
-  return (
-    <button className={button} onClick={() => connect(setUserAddress)}>
-      Connect to MetaMask
-    </button>
-  );
 }
 
 function Address({ userAddress }) {
